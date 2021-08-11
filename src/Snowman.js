@@ -9,7 +9,6 @@ import img4 from "./4.png";
 import img5 from "./5.png";
 import img6 from "./6.png";
 
-
 /** Snowman game: plays hangman-style game with a melting snowman.
  *
  * Props:
@@ -28,15 +27,13 @@ function Snowman(props) {
 
   const [nWrong, setNWrong] = useState(0);
   const [guessedLetters, setGuessedLetters] = useState(new Set());
-  const [answer, setAnswer] = useState((props.words)[0]);
+  const [answer, setAnswer] = useState(props.words[0]); //TODO: make random
 
   /** guessedWord: show current-state of word:
    if guessed letters are {a,p,e}, show "app_e" for "apple"
    */
   function guessedWord() {
-    return answer
-        .split("")
-        .map(ltr => (guessedLetters.has(ltr) ? ltr : "_"));
+    return answer.split("").map((ltr) => (guessedLetters.has(ltr) ? ltr : "_"));
   }
 
   /** handleGuess: handle a guessed letter:
@@ -46,36 +43,39 @@ function Snowman(props) {
   function handleGuess(evt) {
     let ltr = evt.target.value;
 
-    setGuessedLetters(g => {
+    setGuessedLetters((g) => {
       const newGuessed = new Set(g);
       newGuessed.add(ltr);
       return newGuessed;
     });
 
-    setNWrong(n => n + (answer.includes(ltr) ? 0 : 1));
+    setNWrong((n) => n + (answer.includes(ltr) ? 0 : 1));
   }
 
   /** generateButtons: return array of letter buttons to render */
   function generateButtons() {
-    return "abcdefghijklmnopqrstuvwxyz".split("").map(ltr => (
-        <button
-            key={ltr}
-            value={ltr}
-            onClick={handleGuess}
-            disabled={guessedLetters.has(ltr)}
-        >
-          {ltr}
-        </button>
+    return "abcdefghijklmnopqrstuvwxyz".split("").map((ltr) => (
+      <button
+        key={ltr}
+        value={ltr}
+        onClick={handleGuess}
+        disabled={guessedLetters.has(ltr)}
+      >
+        {ltr}
+      </button>
     ));
   }
 
   /** render: render game */
   return (
-      <div className="Snowman">
-        <img src={(props.images)[nWrong]} alt={nWrong} />
-        <p className="Snowman-word">{guessedWord()}</p>
-        <p>{generateButtons()}</p>
-      </div>
+    <div className="Snowman">
+      <img src={props.images[nWrong]} alt={nWrong} />
+      <p className="Snowman-word">
+        {nWrong === props.maxWrong ? answer : guessedWord()}
+      </p>
+      <p> {nWrong === props.maxWrong ? "You lose" : generateButtons()}</p>
+      <p> Number wrong: {nWrong}</p>
+    </div>
   );
 }
 
@@ -84,6 +84,5 @@ Snowman.defaultProps = {
   images: [img0, img1, img2, img3, img4, img5, img6],
   words: ["apple"],
 };
-
 
 export default Snowman;
